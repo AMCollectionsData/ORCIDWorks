@@ -10,7 +10,6 @@ import requests
 import time
 import json
 
-
 def fetch_hub_access_token(app_id, secret):
     auth = {'client_id': app_id, 'client_secret': secret, 'grant_type': 'client_credentials'}
     response = requests.post(
@@ -23,8 +22,7 @@ def fetch_hub_access_token(app_id, secret):
     else:
         raise Exception('Error: {0} {1}'.format(response.status_code, response.reason))
 
-
-with open('Hub API credentials.json') as config_file:
+with open('credentials.json') as config_file:
     API_credentials = json.load(config_file)
     client_id = API_credentials["client_id"]
     client_secret = API_credentials["client_secret"]
@@ -34,18 +32,18 @@ with open('Hub API credentials.json') as config_file:
     environment = API_credentials["service"]
     ORCID_API_version = API_credentials['orcid_version']
 
-if environment.lower() == "test.orcidhub.org.nz":
+if environment.lower() == "test":
     hub_url = 'https://test.orcidhub.org.nz/api/v1/'
     member_orcid_url = 'https://test.orcidhub.org.nz/orcid/api/' + ORCID_API_version + '/'
     member_headers = {'accept': 'application/json', 'authorization': 'Bearer ' + access_token}
     pub_orcid_url = 'https://pub.sandbox.orcid.org/' + ORCID_API_version + '/'
-elif environment.lower == "orcidhub.org.nz":
+elif environment.lower() == "prod":
     hub_url = 'https://orcidhub.org.nz/api/v1/'
     member_orcid_url = 'https://api.orcid.org/' + ORCID_API_version + '/'
     member_headers = {'accept': 'application/json', 'authorization': 'Bearer ' + access_token}
     pub_orcid_url = 'https://pub.orcid.org/' + ORCID_API_version + '/'
 else:
-    raise Exception('Invalid config environment: specify the service as either test.orcidhub.org.nz or orcidhub.org.nz')
+    raise Exception('Invalid config environment: specify the service as either "test" or "prod"')
 
 
 def fetch_hub_users(token):
