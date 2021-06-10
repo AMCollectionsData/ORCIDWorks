@@ -15,6 +15,7 @@ def fetch_orcid_access_token(id, secret, sandbox):
         'grant_type': 'client_credentials',
         'scope': '/read-public'
         }
+    print(auth)
     headers = {
         'accept': 'application/json'
     }
@@ -33,14 +34,11 @@ def fetch_orcid_access_token(id, secret, sandbox):
         data=auth
     )
 
-    print(response.type())
-
-
-    # if response.status_code == 200:
-    #     hub_access_token = response.json()['access_token']
-    #     print("ORCID token: {0}\n\n".format(hub_access_token))
-    #     return hub_access_token
-    # else:
-    #     raise Exception('Error: {0} {1}'.format(response.status_code, response.text))
+    if response.status_code == 200:
+        orcid_access_token = response.json()['access_token']
+        print("ORCID token: {0}\n\n".format(orcid_access_token))
+        return orcid_access_token
+    else:
+        raise Exception('Error: {0} {1}'.format(response.status_code, response.text))
 
 fetch_orcid_access_token(ORCID_API_ID, ORCID_API_SECRET, testing)

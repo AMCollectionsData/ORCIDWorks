@@ -6,67 +6,46 @@
 # Done make UTF-8 safe, much easier than I thought but seems to slow operation
 # Done use time.sleep to control request/min and prevent overloading ORCID (max 8/sec to be safe)
 
-from os import urandom
 import requests
 import time
-from decouple import config
+import json
 
-hubID = config('HUB_ID')
-hubSecret = config('HUB_SECRET')
 
-orcid_token = config('PUBLIC_ACCESS_TOKEN')
-print(orcid_token)
-ORCID_API_version = "v3.0"
-
-testing = True
-
-def fetch_hub_access_token(id, secret, test):
-    print("ID: {0}\nSecret: {1}\nTest: {2}\n".format(id, secret, test))
-    auth = {
-        'client_id': id,
-        'client_secret': secret,
-        'grant_type': 'client_credentials'
-    }
-
-    if test == True:
-        service = "test."
-    else:
-        service = ''
-
-    tokenURL = ('https://' + service + 'orcidhub.org.nz/oauth/token')
-
+def fetch_hub_access_token(app_id, secret):
+    auth = {'client_id': app_id, 'client_secret': secret, 'grant_type': 'client_credentials'}
     response = requests.post(
-        url=tokenURL,
+        url='https://test.orcidhub.org.nz/oauth/token',
         data=auth
     )
     if response.status_code == 200:
         hub_access_token = response.json()['access_token']
-        print("Hub token: {0}.\n\n".format(hub_access_token))
         return hub_access_token
     else:
-        raise Exception('Error: {0} {1}'.format(
-            response.status_code, response.reason))
-access_token = fetch_hub_access_token(hubID, hubSecret, testing)
+        raise Exception('Error: {0} {1}'.format(response.status_code, response.reason))
 
-if testing == True:
+
+with open('Hub API credentials.json') as config_file:
+    API_credentials = json.load(config_file)
+    client_id = API_credentials["client_id"]
+    client_secret = API_credentials["client_secret"]
+    access_token = fetch_hub_access_token(client_id, client_secret)
+    public_orcid_access_token = API_credentials["public_access_token"]
+    public_headers = {'accept': 'application/json', 'authorization': 'Bearer ' + public_orcid_access_token}
+    environment = API_credentials["service"]
+    ORCID_API_version = API_credentials['orcid_version']
+
+if environment.lower() == "test.orcidhub.org.nz":
     hub_url = 'https://test.orcidhub.org.nz/api/v1/'
     member_orcid_url = 'https://test.orcidhub.org.nz/orcid/api/' + ORCID_API_version + '/'
+    member_headers = {'accept': 'application/json', 'authorization': 'Bearer ' + access_token}
     pub_orcid_url = 'https://pub.sandbox.orcid.org/' + ORCID_API_version + '/'
-else:
+elif environment.lower == "orcidhub.org.nz":
     hub_url = 'https://orcidhub.org.nz/api/v1/'
     member_orcid_url = 'https://api.orcid.org/' + ORCID_API_version + '/'
+    member_headers = {'accept': 'application/json', 'authorization': 'Bearer ' + access_token}
     pub_orcid_url = 'https://pub.orcid.org/' + ORCID_API_version + '/'
-
-member_headers = {'accept': 'application/json',
-                  'authorization': 'Bearer ' + access_token,
-                  'accept-encoding': 'identity'
-                  }
-
-public_headers = {
-    'accept': 'application/json',
-    'authorization': 'Bearer ' + orcid_token,
-    'accept-encoding': 'identity'
-}
+else:
+    raise Exception('Invalid config environment: specify the service as either test.orcidhub.org.nz or orcidhub.org.nz')
 
 
 def fetch_hub_users(token):
@@ -89,23 +68,23 @@ def fetch_hub_users(token):
 
 
 def fetch_works_list(token, orcid):
-    headers = {'accept': 'application/json', 'authorization': 'Bearer ' + token, 'accept-encoding': 'identity'}
-    response = requests.get(member_orcid_url + orcid + '/works', headers=headers)
+    headers = {'accept': 'application/json', 'authorization': 'Bearer ' + token}
+    response = requests.get('https://test.orcidhub.org.nz/orcid/api/v2.1/' + orcid + '/works', headers=headers)
     status = response.status_code
-    if status == 401:
+    if status == 403:
         time.sleep(0.125)
-        response = requests.get(pub_orcid_url + orcid + '/works', headers=public_headers)
+        response = requests.get('https://pub.sandbox.orcid.org/v2.1/' + orcid + '/works', headers=public_headers)
     return response, status
 
 
 def fetch_work(token, orcid, putcode, status):
-    headers = {'accept': 'application/json', 'authorization': 'Bearer ' + token, 'accept-encoding': 'identity'}
-    response = requests.get(member_orcid_url + orcid + '/work/' +
+    headers = {'accept': 'application/json', 'authorization': 'Bearer ' + token}
+    response = requests.get('https://test.orcidhub.org.nz/orcid/api/v2.1/' + orcid + '/work/' +
                             str(putcode), headers=headers)
-    if status == 401:
+    if status == 403:
         time.sleep(0.125)
-        response = requests.get(pub_orcid_url + orcid + '/work/' +
-                                str(putcode), headers=public_headers)
+        response = requests.get('https://pub.sandbox.orcid.org/v2.1/' + orcid + '/work/' +
+                                putcode, headers=public_headers)
     return response
 
 
@@ -127,10 +106,7 @@ def fetch_orcid_works(token):
                         external_id_value = ""
                         if source:
                             source = source['value']
-                        try:
-                            title = pub_sum['title']['title']['value']
-                        except (IndexError, TypeError):
-                            title = "No Title"
+                        title = pub_sum['title']['title']['value']
                         try:
                             if len(pub_sum['external-ids']['external-id'][0]['external-id-value']) > 0:
                                 external_id_value = pub_sum['external-ids']['external-id'][0]['external-id-value']
@@ -156,10 +132,10 @@ def fetch_orcid_works(token):
                                           'external-id-value': '', 'type': '', 'publication-date-year': '',
                                           'visibility': '', 'note': 'No visible works'})
             else:
-                pub_summaries.append({'email': users['email'], 'orcid': users['orcid'], 'status': '',
-                                      'put-code': '', 'source': '', 'title': '', 'external-id-type': '',
-                                      'external-id-value': '', 'type': '', 'publication-date-year': '',
-                                      'visibility': '', 'note': 'ORCID iD not confirmed by Hub'})
+                    pub_summaries.append({'email': users['email'], 'orcid': users['orcid'], 'status': '',
+                                          'put-code': '', 'source': '', 'title': '', 'external-id-type': '',
+                                          'external-id-value': '', 'type': '', 'publication-date-year': '',
+                                          'visibility': '', 'note': 'ORCID iD not confirmed by Hub'})
     return pub_summaries
 
 
