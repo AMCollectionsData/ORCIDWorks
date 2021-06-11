@@ -7,26 +7,24 @@ ORCID_API_SECRET = config('ORCID_API_SECRET')
 
 testing = True
 
-def fetch_orcid_access_token(id, secret, sandbox):
-    print("ID: {0}\nSecret: {1}\nSandbox: {2}\n".format(id, secret, sandbox))
+def fetchToken(id, secret, sandbox):
     auth = {
         'client_id': id,
         'client_secret': secret,
         'grant_type': 'client_credentials',
         'scope': '/read-public'
         }
-    print(auth)
     headers = {
         'accept': 'application/json'
     }
     
     if sandbox == True:
-        service = "sandbox."   
+        service = "sandbox."
+        print ("Testing (using sandbox)")
     else:
         service = ''
 
-    tokenURL = 'https://' + service + 'orcid.org/oauth/token/'
-    print('URL: {0}\n'.format(tokenURL))
+    tokenURL = 'https://' + service + 'orcid.org/oauth/token'
 
     response = requests.post(
         url=tokenURL,
@@ -34,11 +32,18 @@ def fetch_orcid_access_token(id, secret, sandbox):
         data=auth
     )
 
+    print('Retrieving token from {0}...'.format(tokenURL))
+
     if response.status_code == 200:
-        orcid_access_token = response.json()['access_token']
-        print("ORCID token: {0}\n\n".format(orcid_access_token))
-        return orcid_access_token
+        ORCID_ACCESS_TOKEN = response.json()['access_token']
+        return ORCID_ACCESS_TOKEN
     else:
         raise Exception('Error: {0} {1}'.format(response.status_code, response.text))
 
-fetch_orcid_access_token(ORCID_API_ID, ORCID_API_SECRET, testing)
+token = fetchToken(ORCID_API_ID, ORCID_API_SECRET, testing)
+
+with open(".env", "a") as file:
+    newline = "PUBLIC_ACCESS_TOKEN = \"" + token + "\""
+    file.write(newline)
+    print ("Added token {0} to .env file.".format(token))
+    file.close
