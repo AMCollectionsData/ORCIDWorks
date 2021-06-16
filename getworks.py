@@ -15,10 +15,9 @@ hubID = config('HUB_ID')
 hubSecret = config('HUB_SECRET')
 
 orcid_token = config('PUBLIC_ACCESS_TOKEN')
-print(orcid_token)
 ORCID_API_version = "v3.0"
 
-testing = True
+testing = False
 
 def fetch_hub_access_token(id, secret, test):
     print("ID: {0}\nSecret: {1}\nTest: {2}\n".format(id, secret, test))
@@ -55,7 +54,7 @@ if testing == True:
 else:
     hub_url = 'https://orcidhub.org.nz/api/v1/'
     member_orcid_url = 'https://api.orcid.org/' + ORCID_API_version + '/'
-    pub_orcid_url = 'https://pub.orcid.org/' + ORCID_API_version + '/'
+    pub_orcid_url = 'https://api.orcid.org/' + ORCID_API_version + '/'
 
 member_headers = {'accept': 'application/json',
                   'authorization': 'Bearer ' + access_token,

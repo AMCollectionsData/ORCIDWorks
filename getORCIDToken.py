@@ -5,7 +5,7 @@ from decouple import config
 ORCID_API_ID = config('ORCID_API_ID')
 ORCID_API_SECRET = config('ORCID_API_SECRET')
 
-testing = True
+testing = False
 
 def fetchToken(id, secret, sandbox):
     auth = {
@@ -20,7 +20,7 @@ def fetchToken(id, secret, sandbox):
     
     if sandbox == True:
         service = "sandbox."
-        print ("Testing (using sandbox)")
+        print ("NB: Running in testing mode (using sandbox).")
     else:
         service = ''
 
@@ -43,7 +43,7 @@ def fetchToken(id, secret, sandbox):
 token = fetchToken(ORCID_API_ID, ORCID_API_SECRET, testing)
 
 with open(".env", "a") as file:
-    newline = "PUBLIC_ACCESS_TOKEN = \"" + token + "\""
+    newline = ("PUBLIC_ACCESS_TOKEN = \"{0}\"".format(token))
     file.write(newline)
-    print ("Added token {0} to .env file.".format(token))
+    print ("Added token '{0}' to .env file.".format(token))
     file.close
