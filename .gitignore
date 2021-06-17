@@ -1,4 +1,5 @@
 .env
-*tsv
-*xls
-*xlsx
+*.tsv
+*.xls
+*.xlsx
+*.log
