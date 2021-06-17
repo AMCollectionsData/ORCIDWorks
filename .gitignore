@@ -3,3 +3,4 @@
 *.xls
 *.xlsx
 *.log
+./logs/*
