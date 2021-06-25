@@ -9,10 +9,7 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.INFO)
 
 logfile_format = logging.Formatter('%(asctime)s: %(name)s (%(funcName)s): %(message)s')
-logfile = logging.FileHandler(  filename='getORCIDtoken.log',
-                                mode='a',
-                                encoding=None,
-                                delay=False )
+logfile = logging.FileHandler(filename='getORCIDtoken.log')
 logfile.setFormatter(logfile_format)
 logfile.setLevel(logging.DEBUG)
 
@@ -66,7 +63,7 @@ def writeToken(token, testing):
     with open(".env", "a") as file:
         if testing == True:
             file.write("\n# Sandbox token\n")
-        token_env = ('PUBLIC_ACCESS_TOKEN = \"{0}\"'.format(token))
+        token_env = ('\nPUBLIC_ACCESS_TOKEN = \"{0}\"'.format(token))
         file.write(token_env)
         log.info("Added token to .env file.")
         file.close
