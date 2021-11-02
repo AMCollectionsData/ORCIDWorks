@@ -4,3 +4,4 @@
 *.xlsx
 *.log
 ./logs/*
+.DS_Store
