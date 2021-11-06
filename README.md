@@ -4,7 +4,7 @@
 
 > Collect works metadata from ORCID.org
 
-Adapted from [a gist](https://gist.github.com/Jason-Gush/bcbab1c3c55e5684251ad3b8ee04eded) by [@JasonGush](https://github.com/Jason-Gush), this is a Python script that collects works on ORCID from their API from a list of users affiliated with an institution on the [NZ ORCID Hub](https://orcidhub.org.nz).
+Adapted from [a gist](https://gist.github.com/Jason-Gush/bcbab1c3c55e5684251ad3b8ee04eded) by [@JasonGush](https://github.com/Jason-Gush), this is a Python script that collects works on ORCID from their API from a list of users affiliated with an institution on the [NZ ORCID Hub](https://orcidhub.org.nz) and outputs them to a CSV file.
 
 ## Installation
 
@@ -30,13 +30,17 @@ pip install -r requirements.txt
 
 Rename [`.env.sample`](.env.sample) to `.env`, and copy and paste your access keys and secrets into it at the appropriate lines. (`.env` is included in [`.gitignore`](https://git-scm.com/docs/gitignore), so it won't be committed.)
 
+### Get token
+
+Run [getORCIDToken.py](getORCIDToken.py) to acquire a token. This will log to [getORCIDToken.log](getORCIDtoken.log).
+
 ### Run
 
-You should now be able to run the script. (In VSCode, press <kbd>F5</kbd>.)
+You should now be able to run the main script, `getworks.py`. (In VSCode, press <kbd>F5</kbd>.) 
 
 ## Configuration
 
-Set `testing` to `True` in [ORCIDWorks.py](ORCIDWorks.py) to use the [ORCID.org sandbox](https://sandbox.orcid.org) and [test.orcidhub.org.nz](https://test.orcidhub.org.nz).
+Set `testing` to `True` in [getworks.py](https://github.com/AMCollectionsData/ORCIDWorks/blob/4a862b19f71dc44929c532e0acd6f5f4cf535f2c/getworks.py#L20) to have the script use the [ORCID.org sandbox](https://sandbox.orcid.org) and [test.orcidhub.org.nz](https://test.orcidhub.org.nz).
 
 ## Libraries
 
@@ -48,4 +52,4 @@ Issued under the [MIT](/LICENSE) license.
 
 ## Help
 
-Please use [Discussions](discussions) to ask for help, or [raise an issue](issues) to report a bug or request a new feature.
+Please use [Discussions](//github.com/AMCollectionsData/ORCIDWorks/discussions) to ask for help, or [raise an issue](//github.com/AMCollectionsData/ORCIDWorks/issues/new/choose) to report a bug or request a new feature.
