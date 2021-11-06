@@ -28,11 +28,11 @@ pip install -r requirements.txt
 
 ### Secrets
 
-Rename [`.env.sample`](.env.sample) to `.env`, and copy and paste your access keys and secrets into it at the appropriate lines. (`.env` is included in `.gitignore`, so it won't be committed.)
+Rename [`.env.sample`](.env.sample) to `.env`, and copy and paste your access keys and secrets into it at the appropriate lines. (`.env` is included in [`.gitignore`](https://git-scm.com/docs/gitignore), so it won't be committed.)
 
 ### Run
 
-You should now be able to run the script. In VSCode, press <kbd>F5</kbd>.
+You should now be able to run the script. (In VSCode, press <kbd>F5</kbd>.)
 
 ## Configuration
 
@@ -44,4 +44,8 @@ The script uses [python-decouple](https://pypi.org/project/python-decouple/) to 
 
 ## Licensing
 
-[MIT](/LICENSE).
+Issued under the [MIT](/LICENSE) license.
+
+## Help
+
+Please use [Discussions](discussions) to ask for help, or [raise an issue](issues) to report a bug or request a new feature.
