@@ -32,7 +32,7 @@ Rename [`.env.sample`](.env.sample) to `.env`, and copy and paste your access ke
 
 ### Get token
 
-Run [getORCIDToken.py](getORCIDToken.py) to acquire a token. This will log to [getORCIDToken.log](getORCIDtoken.log).
+Run [getORCIDToken.py](getORCIDToken.py) to acquire a token. This will log to `getORCIDtoken.log`.
 
 ### Run
 
