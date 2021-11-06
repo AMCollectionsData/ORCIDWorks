@@ -17,7 +17,7 @@ hubSecret = config('HUB_SECRET')
 orcid_token = config('PUBLIC_ACCESS_TOKEN')
 ORCID_API_version = "v3.0"
 
-testing = False
+testing = True
 
 def fetch_hub_access_token(id, secret, test):
     print("ID: {0}\nSecret: {1}\nTest: {2}\n".format(id, secret, test))
