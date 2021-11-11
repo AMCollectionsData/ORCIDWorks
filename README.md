@@ -53,3 +53,7 @@ Issued under the [MIT](/LICENSE) license.
 ## Help
 
 Please use [Discussions](//github.com/AMCollectionsData/ORCIDWorks/discussions) to ask for help, or [raise an issue](//github.com/AMCollectionsData/ORCIDWorks/issues/new/choose) to report a bug or request a new feature.
+
+## Contributions
+
+![Alt](https://repobeats.axiom.co/api/embed/ad3754e08280c0c99d0a3f5cdb8b719a1993e495.svg "Repobeats analytics image")
